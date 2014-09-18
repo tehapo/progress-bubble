@@ -40,7 +40,7 @@
             window.setInterval(function() {
                 document.querySelectorAll("progress-bubble").forEach(function(e) {
                     e.value = x;
-                    e.innerText = x + "%";
+                    e.textContent = x + "%";
                 });
                 x += 10;
                 if (x > 100) { x = 0; }
