@@ -1,0 +1,43 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<polymer-element name="progress-bubble" attributes="value max stroke strokeWidth">
+    <template>
+        <link rel="stylesheet" href="progress-bubble.css" />
+            <svg id="progressArc" width="100%" height="100%">
+                <circle id="svgCircle" r="{{radius}}" cx="{{cx}}" cy="{{cy}}" fill="transparent"
+                    stroke="{{stroke}}" stroke-width="{{strokeWidth}}"
+                    stroke-dasharray="{{dasharray}}"
+                    stroke-dashoffset="{{dashoffset}}"
+                    transform="{{transform}}" />
+            </svg>
+            <div id="reflection"></div>
+            <div id="content"><content></content></div>
+    </template>
+    <script>
+        Polymer("progress-bubble", {
+            value: 0,
+            max: 100,
+            cx: 50,
+            cy: 50,
+            strokeWidth: 6,
+            stroke: "rgba(0, 240, 45, 0.8)",
+            radius: 22,
+            transform: "rotate(-90, 100, 100)",
+            dasharray: 138.23007676,
+            dashoffset: 138.23007676,
+
+            redraw: function() {
+                this.cx = this.clientWidth / 2;
+                this.cy = this.clientWidth / 2;
+                this.radius = Math.min(this.cx, this.cy) - this.strokeWidth / 2;
+                this.transform = "rotate(-90, " + this.cx + ", " + this.cy + ")";
+                this.dasharray = 2 * Math.PI * this.radius;
+                this.dashoffset = (1 - this.value / this.max) * this.dasharray;
+            },
+            ready: function() { this.redraw(); },
+            strokeChanged: function() { this.redraw(); },
+            valueChanged: function() { this.redraw(); },
+            maxChanged: function() { this.redraw(); }
+        });
+    </script>
+</polymer-element>

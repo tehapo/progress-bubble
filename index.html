@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Simple test page for progress-bubble element</title>
+        <script src="../platform/platform.js"></script>
+        <link rel="import" href="progress-bubble.html" />
+
+        <style type="text/css">
+            progress-bubble {
+                position: absolute;
+                top: 100px;
+                margin-left: 100px;
+            }
+            body {
+                background: #222;
+                background-size: cover;
+                font-family: "Open Sans", Helvetica, sans-serif;
+            }
+        </style>
+    </head>
+    <body>
+        <progress-bubble></progress-bubble>
+        <progress-bubble></progress-bubble>
+        <progress-bubble></progress-bubble>
+        <progress-bubble></progress-bubble>
+        <progress-bubble></progress-bubble>
+        <progress-bubble></progress-bubble>
+
+        <script type="text/javascript">
+            NodeList.prototype.forEach = Array.prototype.forEach;  // Haxor.
+
+            document.querySelectorAll("progress-bubble").forEach(function(e, i) {
+                e.style.left = (i * 180) + "px";
+                e.style.width = (60 + i * 15) + "px";
+                e.style.height = e.style.width;
+                e.style.fontSize = (i + 6) * 3 + "px";
+            });
+
+            var x = 0;
+            window.setInterval(function() {
+                document.querySelectorAll("progress-bubble").forEach(function(e) {
+                    e.value = x;
+                    e.innerText = x + "%";
+                });
+                x += 10;
+                if (x > 100) { x = 0; }
+            }, 500);
+        </script>
+
+    </body>
+</html>
