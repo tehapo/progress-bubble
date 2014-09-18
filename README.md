@@ -1,14 +1,15 @@
 progress-bubble
 ===============
 
-(https://raw.githubusercontent.com/tehapo/progress-bubble/master/screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/tehapo/progress-bubble/master/screenshot.png)
+
 Simple Polymer-based web component to display a circular progress bar and optionally some content in the middle.
 
 At this point this is simply an experiment and is tested only on Google Chrome browser.
 
 ## Getting Started
 
-```<!-- Basic usage -->
+```
 <progress-bubble value="8" max="10">
     <strong>80%</strong>
 </progress-bubble>
