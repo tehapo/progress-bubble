@@ -7,6 +7,8 @@ Simple Polymer-based web component to display a circular progress bar and option
 
 At this point this is simply an experiment and is tested only on Google Chrome browser.
 
+See a [live demo](http://tehapo.com/experiments/progress-bubble/).
+
 ## Getting Started
 
 ### Installation
