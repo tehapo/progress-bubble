@@ -9,6 +9,12 @@ At this point this is simply an experiment and is tested only on Google Chrome b
 
 ## Getting Started
 
+### Installation
+```
+bower install progress-bubble --save
+```
+
+### Usage
 ```
 <progress-bubble value="8" max="10">
     <strong>80%</strong>
