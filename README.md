@@ -12,12 +12,12 @@ See a [live demo](http://tehapo.com/experiments/progress-bubble/).
 ## Getting Started
 
 ### Installation
-```
+```bash
 bower install progress-bubble --save
 ```
 
 ### Usage
-```
+```html
 <progress-bubble value="8" max="10">
     <strong>80%</strong>
 </progress-bubble>
