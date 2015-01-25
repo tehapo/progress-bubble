@@ -29,7 +29,7 @@
 
             redraw: function() {
                 this.cx = this.clientWidth / 2;
-                this.cy = this.clientWidth / 2;
+                this.cy = this.clientHeight / 2;
                 this.radius = Math.min(this.cx, this.cy) - this.strokeWidth / 2;
                 this.transform = "rotate(-90, " + this.cx + ", " + this.cy + ")";
                 this.dasharray = 2 * Math.PI * this.radius;
