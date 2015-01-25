@@ -25,7 +25,6 @@
             transform: "rotate(-90, 100, 100)",
             dasharray: 138.23007676,
             dashoffset: 138.23007676,
-            dashdirection: (navigator.userAgent.toLowerCase().indexOf("firefox") == -1 ? 1 : -1),
 
             redraw: function() {
                 this.cx = this.clientWidth / 2;
@@ -33,7 +32,7 @@
                 this.radius = Math.min(this.cx, this.cy) - this.strokeWidth / 2;
                 this.transform = "rotate(-90, " + this.cx + ", " + this.cy + ")";
                 this.dasharray = 2 * Math.PI * this.radius;
-                this.dashoffset = this.dashdirection * (1 - this.value / this.max) * this.dasharray;
+                this.dashoffset = (1 - this.value / this.max) * this.dasharray;
             },
             ready: function() { this.redraw(); },
             strokeChanged: function() { this.redraw(); },
