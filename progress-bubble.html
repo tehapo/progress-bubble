@@ -3,15 +3,15 @@
 <polymer-element name="progress-bubble" attributes="value max stroke strokeWidth">
     <template>
         <link rel="stylesheet" href="progress-bubble.css" />
-            <svg id="progressArc" width="100%" height="100%">
-                <circle id="svgCircle" r="{{radius}}" cx="{{cx}}" cy="{{cy}}" fill="transparent"
-                    stroke="{{stroke}}" stroke-width="{{strokeWidth}}"
-                    stroke-dasharray="{{dasharray}}"
-                    stroke-dashoffset="{{dashoffset}}"
-                    transform="{{transform}}" />
-            </svg>
-            <div id="reflection"></div>
-            <div id="content"><content></content></div>
+        <svg id="progressArc" width="100%" height="100%">
+            <circle id="svgCircle" r="{{radius}}" cx="{{cx}}" cy="{{cy}}" fill="transparent"
+                stroke="{{stroke}}" stroke-width="{{strokeWidth}}"
+                stroke-dasharray="{{dasharray}}"
+                stroke-dashoffset="{{dashoffset}}"
+                transform="{{transform}}" />
+        </svg>
+        <div id="reflection"></div>
+        <div id="content"><content></content></div>
     </template>
     <script>
         Polymer("progress-bubble", {
