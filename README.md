@@ -5,8 +5,6 @@ progress-bubble
 
 Simple Polymer-based web component to display a circular progress bar and optionally some content in the middle.
 
-At this point this is simply an experiment and is tested only on Google Chrome browser.
-
 See a [live demo](http://tehapo.com/experiments/progress-bubble/).
 
 ## Getting Started
@@ -23,7 +21,15 @@ bower install progress-bubble --save
 </progress-bubble>
 
 <!-- Custom stroke color and width -->
-<progress-bubble value="8" max="10" stroke="rgba(255, 0, 0, 0.8)" stokeWidth="10">
+<style is="custom-style">
+    progress-bubble {
+        --progress-bubble-stroke-color: rgba(255, 0, 0, 0.8);
+    }
+</style>
+<progress-bubble value="8" max="10" strokeWidth="10">
     <strong>80%</strong>
 </progress-bubble>
 ```
+
+### Development
+Use ```polyserve``` during development as instructed in [Create a reusable element](https://www.polymer-project.org/1.0/docs/start/reusableelements.html) article.
