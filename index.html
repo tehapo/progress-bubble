@@ -3,6 +3,10 @@
     <head>
         <title>Simple test page for progress-bubble element</title>
         <script src="../webcomponentsjs/webcomponents.min.js"></script>
+        <script>
+            // window.Polymer = window.Polymer || {};
+            // window.Polymer.dom = 'shadow';
+        </script>
         <link rel="import" href="progress-bubble.html" />
 
         <style type="text/css">
@@ -18,7 +22,11 @@
         </style>
         <style is="custom-style">
             progress-bubble:nth-child(even) {
+                text-shadow: none;
                 --progress-bubble-stroke-color: rgba(255, 0, 0, 0.8);
+                --progress-bubble-bg-stroke-color: rgba(193, 193, 193, 0.2);
+                --progress-bubble-background: transparent;
+                --progress-bubble-reflection-display: none;
             }
         </style>
     </head>

@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="progress-bubble">
     <style>
@@ -8,7 +9,7 @@
             height: 100px;
             margin: 10px;
             position: relative;
-            background: radial-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.2));
+            background: var(--progress-bubble-background, radial-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.2)));
             border-radius: 50%;
             font-size: 24px;
             text-shadow: 0 2px 2px rgba(0, 0, 0, 0.8);
@@ -18,15 +19,15 @@
             opacity: 0;
             transition: opacity 150ms;
         }
-        :host.calculation-ready svg,
-        :host.calculation-ready div{
+        :host(.calculation-ready) svg,
+        :host(.calculation-ready) div{
             opacity: 1;
         }
         #reflection {
             width: 25%;
             height: 25%;
             background: url("reflection.svg") top left no-repeat;
-            display: block;
+            display: var(--progress-bubble-reflection-display, block);
             position: absolute;
             top: 14%;
             left: 15%;
@@ -35,19 +36,16 @@
         #content {
             width: 100%;
             height: 100%;
-            display: -webkit-flex;
-            display: flex;
-            -webkit-flex-direction: column;
-            flex-direction: column;
-            -webkit-align-items: center;
-            align-items: center;
-            -webkit-justify-content: center;
-            justify-content: center;
+            @apply(--layout-vertical);
+            @apply(--layout-center-center);
         }
         svg {
             position: absolute;
             top: 0;
             left: 0;
+        }
+        #bgCircle {
+            stroke: var(--progress-bubble-bg-stroke-color, rgba(255, 255, 255, 0.1));
         }
         #svgCircle {
             transition: stroke-dashoffset 150ms;
@@ -56,8 +54,8 @@
     </style>
     <template>
         <svg id="progressArc" width="100%" height="100%">
-            <circle r$="[[_radius]]" cx$="[[_cx]]" cy$="[[_cy]]" fill="transparent"
-                    stroke="rgba(255, 255, 255, 0.1)" stroke-width$="[[strokeWidth]]" />
+            <circle id="bgCircle" r$="[[_radius]]" cx$="[[_cx]]" cy$="[[_cy]]" fill="transparent"
+                    stroke-width$="[[strokeWidth]]" />
             <circle id="svgCircle" r$="[[_radius]]" cx$="[[_cx]]" cy$="[[_cy]]" fill="transparent"
                 stroke-width$="[[strokeWidth]]"
                 stroke-dasharray$="[[_dasharray]]"
