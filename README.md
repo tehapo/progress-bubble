@@ -20,10 +20,13 @@ bower install progress-bubble --save
     <strong>80%</strong>
 </progress-bubble>
 
-<!-- Custom stroke color and width -->
+<!-- Custom styling and stroke-width -->
 <style is="custom-style">
     progress-bubble {
         --progress-bubble-stroke-color: rgba(255, 0, 0, 0.8);
+        --progress-bubble-bg-stroke-color: rgba(193, 193, 193, 0.2);
+        --progress-bubble-background: transparent;
+        --progress-bubble-reflection-display: none;
     }
 </style>
 <progress-bubble value="8" max="10" stroke-width="10">
