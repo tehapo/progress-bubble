@@ -50,6 +50,7 @@
         #svgCircle {
             transition: stroke-dashoffset 150ms;
             stroke: var(--progress-bubble-stroke-color, rgba(0, 240, 45, 0.8));
+            stroke-linecap: var(--progress-bubble-stroke-linecap, round);
         }
     </style>
     <template>
@@ -60,7 +61,6 @@
                 stroke-width$="[[strokeWidth]]"
                 stroke-dasharray$="[[_dasharray]]"
                 stroke-dashoffset$="[[_dashoffset]]"
-                stroke-linecap="round"
                 transform$="[[_transform]]" />
         </svg>
         <div id="reflection"></div>
