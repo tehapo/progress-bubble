@@ -46,6 +46,7 @@
         }
         #bgCircle {
             stroke: var(--progress-bubble-bg-stroke-color, rgba(255, 255, 255, 0.1));
+            stroke-linecap: var(--progress-bubble-stroke-linecap, round);
         }
         #svgCircle {
             transition: stroke-dashoffset 150ms;
@@ -56,7 +57,10 @@
     <template>
         <svg id="progressArc" width="100%" height="100%">
             <circle id="bgCircle" r$="[[_radius]]" cx$="[[_cx]]" cy$="[[_cy]]" fill="transparent"
-                    stroke-width$="[[strokeWidth]]" />
+                    stroke-width$="[[strokeWidth]]"
+                    stroke-dasharray$="[[_dasharray]]"
+                    stroke-dashoffset$="[[_bgdashoffset]]"
+                    transform$="[[_transform]]" />
             <circle id="svgCircle" r$="[[_radius]]" cx$="[[_cx]]" cy$="[[_cy]]" fill="transparent"
                 stroke-width$="[[strokeWidth]]"
                 stroke-dasharray$="[[_dasharray]]"
@@ -72,59 +76,177 @@
         is: 'progress-bubble',
 
         properties: {
+            /**
+            * Value given by the user
+            */
             value: {
                 type: Number,
                 value: 0
             },
-            max: {
-                type: Number,
-                value: 100
-            },
+
+            /**
+            * Width of the stroke
+            */ 
             strokeWidth: {
                 type: Number,
                 value: 6
             },
-            _cx: {
-                type: Number,
-                value: 50
+
+            /**
+            * Max Value of the Gauge
+            */
+            maxgauge: {
+              type: Number,
+              value: 100
+            }, 
+
+            /**
+            * Min Value of the Gauge
+            */
+            mingauge: {
+              type: Number,
+              value: 0
+            }, 
+
+            /**
+            * If true force value to included to the given interval
+            */
+            isinside: {
+                type: Boolean,
+                value: false
             },
-            _cy: {
-                type: Number,
-                value: 50
-            },
+
+            /*
+            * Value of the starting angle
+            */
             alpha: {
                 type: Number,
                 value: -90
             },
+
+            /** 
+            * Max angle of the progress bar segment
+            */ 
+            beta: {
+              type: Number,
+              value: 360
+            },
+
+            /**
+            * Internal computed value correspond to the value in the interval
+            */
+            _value: {
+                type: Number,
+                computed: '_computeValue(value, maxgauge, mingauge, isinside)'
+            },
+
+            /**
+            * Internal computed max value (size of the interval)
+            */
+            _max: {
+                type: Number,
+                computed: '_computeMax(maxgauge, mingauge)'
+            },
+
+            /*
+            * Internal value x of the circle
+            */
+            _cx: {
+                type: Number,
+                value: 50
+            },
+
+            /*
+            * Internal value y of the circle
+            */
+            _cy: {
+                type: Number,
+                value: 50
+            },
+
+            /**
+            * Internal radius of the circle
+            */
             _radius: {
                 type: Number,
                 computed: '_computeRadius(_cx, _cy, strokeWidth)'
             },
+
+            /**
+            * Internal transformation of the circle
+            */
             _transform: {
                 type: String,
                 computed: '_computeTransform(_cx, _cy, alpha)'
             },
+
+            /**
+            * Internal dash array of the circle
+            */
             _dasharray: {
                 type: Number,
                 computed: '_computeDashArray(_radius)'
             },
+
+            /**
+            * Internal dash offset of the circle
+            */
             _dashoffset: {
                 type: Number,
-                computed: '_computeDashOffset(value, max, _dasharray)'
+                computed: '_computeDashOffset(_value, _max, _dasharray)'
+            },
+
+            /**
+            * Internal background dash offset of the circle
+            */
+            _bgdashoffset: {
+                type: Number,
+                computed: '_computeDashOffset(_max, _max, _dasharray)'
             }
+
         },
+
+        // Compute the corresponding value of the given value in the max/min gauge
+         _computeValue: function(value, maxgauge, mingauge, isinside) {
+            var _value = value - mingauge;
+            if (isinside) {
+                if (value<mingauge) {
+                  _value = 0;
+                } else if(value > maxgauge) {
+                  _value = maxgauge - mingauge;
+                }
+            }
+            return _value;
+        },
+
+        // Compute value max (interval)
+         _computeMax: function(maxgauge, mingauge) {
+            return maxgauge - mingauge;
+        },
+
+        // Compute the circle radius
         _computeRadius: function(_cx, _cy, strokeWidth) {
             return Math.max(0, Math.min(_cx, _cy) - strokeWidth / 2);
         },
+
+        // Compute the circle dash array
         _computeDashArray: function(_radius) {
             return 2 * Math.PI * _radius;
         },
-        _computeDashOffset: function(value, max, _dasharray) {
-            return (1 - value / max) * _dasharray;
+
+        // Compute the circle dash offset
+        _computeDashOffset: function(_value, _max, _dasharray) {
+            var correctedinterval = _max * this.beta / 360;
+            var _correctedvalue = _value * correctedinterval / _max;
+            return (1 - _correctedvalue / _max) * _dasharray;
         },
+
+        // Apply the transformation
         _computeTransform: function(_cx, _cy, alpha) {
             return 'rotate(' + alpha + ', ' + _cx + ', ' + _cy + ')';
         },
+
+        // Redraw funtion
         redraw: function() {
             this._cx = this.clientWidth / 2;
             this._cy = this.clientHeight / 2;
@@ -132,12 +254,14 @@
             // Keep the content invisible before first calculation is done.
             this.classList.add('calculation-ready');
         },
+
         attached: function() {
             // Must use this.async in order to have clientWidth/clientHeight available.
             this.async(this.redraw, 100);
         },
+
         attributeChanged: function() {
             this.redraw();
-        }
+        },
     });
 </script>
