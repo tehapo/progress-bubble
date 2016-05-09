@@ -95,7 +95,7 @@
             /**
             * Max Value of the Gauge
             */
-            maxgauge: {
+            max: {
               type: Number,
               value: 100
             }, 
@@ -103,7 +103,7 @@
             /**
             * Min Value of the Gauge
             */
-            mingauge: {
+            min: {
               type: Number,
               value: 0
             }, 
@@ -137,7 +137,7 @@
             */
             _value: {
                 type: Number,
-                computed: '_computeValue(value, maxgauge, mingauge, isinside)'
+                computed: '_computeValue(value, max, min, isinside)'
             },
 
             /**
@@ -145,7 +145,7 @@
             */
             _max: {
                 type: Number,
-                computed: '_computeMax(maxgauge, mingauge)'
+                computed: '_computeMax(max, min)'
             },
 
             /*
@@ -207,21 +207,21 @@
         },
 
         // Compute the corresponding value of the given value in the max/min gauge
-         _computeValue: function(value, maxgauge, mingauge, isinside) {
-            var _value = value - mingauge;
+         _computeValue: function(value, max, min, isinside) {
+            var _value = value - min;
             if (isinside) {
-                if (value<mingauge) {
+                if (value<min) {
                   _value = 0;
-                } else if(value > maxgauge) {
-                  _value = maxgauge - mingauge;
+                } else if(value > max) {
+                  _value = max - min;
                 }
             }
             return _value;
         },
 
         // Compute value max (interval)
-         _computeMax: function(maxgauge, mingauge) {
-            return maxgauge - mingauge;
+         _computeMax: function(max, min) {
+            return max - min;
         },
 
         // Compute the circle radius

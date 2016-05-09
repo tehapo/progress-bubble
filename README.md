@@ -16,8 +16,9 @@ bower install progress-bubble --save
 
 ### Usage
 ```html
-<progress-bubble value="8" max="10">
-    <strong>80%</strong>
+
+<progress-bubble value="8" stroke-width="10" maxgauge="10">
+              <strong>80%</strong>
 </progress-bubble>
 
 <!-- Custom styling and stroke-width -->
@@ -30,8 +31,10 @@ bower install progress-bubble --save
         --progress-bubble-reflection-display: none;
     }
 </style>
-<progress-bubble value="8" max="10" stroke-width="10">
-    <strong>80%</strong>
+<!-- Set an interval with a min and max value, And a starting angle and an ending angle equals to 180 degree, 
+set isinside value to block the value of the progress bar inside the interval-->
+<progress-bubble value="42" stroke-width="10" alpha="180" max="110" min="-10" beta="180" isinside="true">
+              <strong>42</strong>
 </progress-bubble>
 ```
 
