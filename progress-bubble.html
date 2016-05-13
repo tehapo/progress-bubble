@@ -11,9 +11,6 @@
             position: relative;
             background: var(--progress-bubble-background, radial-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.2)));
             border-radius: 50%;
-            font-size: 24px;
-            text-shadow: 0 2px 2px rgba(0, 0, 0, 0.8);
-            color: #fff;
         }
         svg, div {
             opacity: 0;
@@ -34,37 +31,47 @@
             background-size: contain;
         }
         #content {
-            width: 100%;
-            height: 100%;
-            @apply(--layout-vertical);
-            @apply(--layout-center-center);
+            margin: 10px;
+            position: absolute;
+            display: inline-block;
         }
         svg {
             position: absolute;
+            margin: 5px;
             top: 0;
             left: 0;
         }
         #bgCircle {
             stroke: var(--progress-bubble-bg-stroke-color, rgba(255, 255, 255, 0.1));
+            stroke-linecap: var(--progress-bubble-stroke-linecap, round);
         }
         #svgCircle {
             transition: stroke-dashoffset 150ms;
             stroke: var(--progress-bubble-stroke-color, rgba(0, 240, 45, 0.8));
             stroke-linecap: var(--progress-bubble-stroke-linecap, round);
         }
+        .test {
+            left: 0;
+        }
     </style>
     <template>
-        <svg id="progressArc" width="100%" height="100%">
-            <circle id="bgCircle" r$="[[_radius]]" cx$="[[_cx]]" cy$="[[_cy]]" fill="transparent"
-                    stroke-width$="[[strokeWidth]]" />
-            <circle id="svgCircle" r$="[[_radius]]" cx$="[[_cx]]" cy$="[[_cy]]" fill="transparent"
-                stroke-width$="[[strokeWidth]]"
-                stroke-dasharray$="[[_dasharray]]"
-                stroke-dashoffset$="[[_dashoffset]]"
-                transform$="[[_transform]]" />
-        </svg>
-        <div id="reflection"></div>
-        <div id="content"><content></content></div>
+        <div id=container>
+            <svg id="progressArc">
+                <circle id="bgCircle" r$="[[_radius]]" cx$="[[_cx]]" cy$="[[_cy]]" fill="transparent"
+                        stroke-width$="[[strokeWidth]]"
+                        stroke-dasharray$="[[_dasharray]]"
+                        stroke-dashoffset$="[[_bgdashoffset]]"
+                        transform$="[[_transform]]" />
+                <circle id="svgCircle" r$="[[_radius]]" cx$="[[_cx]]" cy$="[[_cy]]" fill="transparent"
+                    stroke-width$="[[strokeWidth]]"
+                    stroke-dasharray$="[[_dasharray]]"
+                    stroke-dashoffset$="[[_dashoffset]]"
+                    transform$="[[_transform]]" />
+            </svg>
+            <div id="reflection"></div>
+            <div id="content"><content></content>
+        </div>
+        </circle>
     </template>
 </dom-module>
 <script>
@@ -72,68 +79,318 @@
         is: 'progress-bubble',
 
         properties: {
+            /**
+            * The chart width, in pixels
+            */
+            width: {
+                type: Number,
+                value: -1
+            },
+            /**
+            * The chart height, in pixels
+            */
+            height: {
+                type: Number,
+                value: -1
+            },
+            /**
+            * Value given by the user
+            */
             value: {
                 type: Number,
                 value: 0
             },
-            max: {
-                type: Number,
-                value: 100
-            },
+
+            /**
+            * Width of the stroke
+            */ 
             strokeWidth: {
                 type: Number,
                 value: 6
             },
+
+            /**
+            * Max Value of the Gauge
+            */
+            max: {
+              type: Number,
+              value: 100
+            }, 
+
+            /**
+            * Min Value of the Gauge
+            */
+            min: {
+              type: Number,
+              value: 0
+            }, 
+
+            /**
+            * If true force value to included to the given interval
+            */
+            isinside: {
+                type: Boolean,
+                value: false
+            },
+
+            /*
+            * Value of the starting angle
+            */
+            alpha: {
+                type: Number,
+                value: -90
+            },
+
+            /** 
+            * Max angle of the progress bar segment
+            */ 
+            beta: {
+              type: Number,
+              value: 360
+            },
+
+            /**
+            * Array containing the CSS elements for the jauge
+            */
+            gaugeStyle: {
+                type: Array,
+                value: function() { return []; }
+            },
+
+            /**
+            * Array containing the CSS elements for value
+            */
+            valueStyle: {
+                type: Array,
+                value: function() { return []; }
+            },
+
+            /**
+            * Internal computed value correspond to the value in the interval
+            */
+            _value: {
+                type: Number,
+                computed: '_computeValue(value, max, min, isinside)'
+            },
+
+            /**
+            * Internal computed max value (size of the interval)
+            */
+            _max: {
+                type: Number,
+                computed: '_computeMax(max, min)'
+            },
+
+            /*
+            * Internal value x of the circle
+            */
             _cx: {
                 type: Number,
                 value: 50
             },
+
+            /*
+            * Internal value y of the circle
+            */
             _cy: {
                 type: Number,
                 value: 50
             },
+
+            /**
+            * Internal radius of the circle
+            */
             _radius: {
                 type: Number,
                 computed: '_computeRadius(_cx, _cy, strokeWidth)'
             },
+
+            /**
+            * Internal transformation of the circle
+            */
             _transform: {
                 type: String,
-                computed: '_computeTransform(_cx, _cy)'
+                computed: '_computeTransform(_cx, _cy, alpha)'
             },
+
+            /**
+            * Internal dash array of the circle
+            */
             _dasharray: {
                 type: Number,
                 computed: '_computeDashArray(_radius)'
             },
+
+            /**
+            * Internal dash offset of the circle
+            */
             _dashoffset: {
                 type: Number,
-                computed: '_computeDashOffset(value, max, _dasharray)'
+                computed: '_computeDashOffset(_value, _max, _dasharray)'
+            },
+
+            /**
+            * Internal background dash offset of the circle
+            */
+            _bgdashoffset: {
+                type: Number,
+                computed: '_computeDashOffset(_max, _max, _dasharray)'
             }
+
         },
+
+        // Compute the corresponding value of the given value in the max/min gauge
+         _computeValue: function(value, max, min, isinside) {
+            var _value = value - min;
+            if (isinside) {
+                if (value<min) {
+                  _value = 0;
+                } else if(value > max) {
+                  _value = max - min;
+                }
+            }
+            return _value;
+        },
+
+        // Compute value max (interval)
+         _computeMax: function(max, min) {
+            return max - min;
+        },
+
+        // Compute the circle radius
         _computeRadius: function(_cx, _cy, strokeWidth) {
             return Math.max(0, Math.min(_cx, _cy) - strokeWidth / 2);
         },
+
+        // Compute the circle dash array
         _computeDashArray: function(_radius) {
             return 2 * Math.PI * _radius;
         },
-        _computeDashOffset: function(value, max, _dasharray) {
-            return (1 - value / max) * _dasharray;
+
+        // Compute the circle dash offset
+        _computeDashOffset: function(_value, _max, _dasharray) {
+            var correctedinterval = _max * this.beta / 360;
+            var _correctedvalue = _value * correctedinterval / _max;
+            return (1 - _correctedvalue / _max) * _dasharray;
         },
-        _computeTransform: function(_cx, _cy) {
-            return 'rotate(-90, ' + _cx + ', ' + _cy + ')';
+
+        // Apply the transformation
+        _computeTransform: function(_cx, _cy, alpha) {
+            return 'rotate(' + alpha + ', ' + _cx + ', ' + _cy + ')';
         },
+
+        // Redraw funtion
         redraw: function() {
-            this._cx = this.clientWidth / 2;
-            this._cy = this.clientHeight / 2;
+            this._cx = this.$.progressArc.getBoundingClientRect().width / 2;
+            this._cy = this.$.progressArc.getBoundingClientRect().height / 2;
 
             // Keep the content invisible before first calculation is done.
             this.classList.add('calculation-ready');
         },
+
         attached: function() {
             // Must use this.async in order to have clientWidth/clientHeight available.
+            this.configure();
             this.async(this.redraw, 100);
         },
+
         attributeChanged: function() {
             this.redraw();
-        }
+        },
+
+        // Component methods
+        configure: function() {
+          // Dimensions
+        console.debug("[Configure] " + this.gaugeStyle);
+          if (this.width <0) {
+            this.style.width = "100px";
+          } else {
+            this.style.width = (parseInt(this.width))+"px";
+          }
+          if (this.height <0) {
+            this.style.height = "100px";
+          } else {
+            this.style.height = (parseInt(this.height))+"px";
+          }
+
+          // Gauge absolute style
+          if(this.gaugeStyle.length != 4 ) {
+            this.$.progressArc.style.width = "100%";
+            this.$.progressArc.style.height = "100%";
+          } else {
+            if (this.gaugeStyle[2] == NaN) {
+                this.$.progressArc.style.width = "100%";
+            } else {
+                this.$.progressArc.style.width = (parseInt(this.gaugeStyle[2]))+"px";
+            }
+            if (this.gaugeStyle[3] == NaN) {
+                this.$.progressArc.style.height = "100%";
+            } else {
+                this.$.progressArc.style.height = (parseInt(this.gaugeStyle[3]))+"px";
+            }
+            switch(this.gaugeStyle[0]) {
+                case 'top':
+                    this.$.progressArc.style.top = "0";
+                    break;
+                case 'center':
+                    var gaugeHeight= this.$.progressArc.getBoundingClientRect().height;
+                    var topSize = (parseInt(this.height) - gaugeHeight) / 2;
+                    this.$.progressArc.style.top = topSize.toString() + "px";
+                    break;
+                case 'bottom':
+                    this.$.progressArc.style.bottom = "0";
+                    break;
+                default:
+            }
+            switch(this.gaugeStyle[1]) {
+                case 'left':
+                    this.$.progressArc.style.left = "0";
+                    break;
+                case 'center':
+                    var gaugeWidth= this.$.progressArc.getBoundingClientRect().width;
+                    var widthSize = (parseInt(this.width) - gaugeWidth) / 2;
+                    this.$.progressArc.style.left = widthSize.toString() + "px";
+                    break;
+                case 'right':
+                    this.$.progressArc.style.right = 0;
+                    break;
+                default:
+            }
+          }
+
+        // Absolute value
+        console.debug("[Configure] " + this.valueStyle);
+          if(this.valueStyle.length == 2 ) {
+            switch(this.valueStyle[0]) {
+                case 'top':
+                    this.$.content.style.top = "0";
+                    break;
+                case 'center':
+                    var valueHeight= this.$.content.getBoundingClientRect().height;
+                    console.debug("Width value : " + valueHeight);
+                    var topSize = (parseInt(this.height) - valueHeight) / 2;
+                    this.$.content.style.top = topSize.toString() + "px";
+                    break;
+                case 'bottom':
+                    this.$.content.style.bottom = "0";
+                    break;
+                default:
+            }
+            switch(this.valueStyle[1]) {
+                case 'left':
+                    this.$.content.style.left = "0";
+                    break;
+                case 'center':
+                    var valueWidth = this.$.content.getBoundingClientRect().width;
+                    var widthSize = (parseInt(this.width) - valueWidth) / 2;
+                    this.$.content.style.left = widthSize.toString() + "px";
+                    break;
+                case 'right':
+                    this.$.content.style.right = 0;
+                    break;
+                default:
+            }
+          }
+        },
     });
 </script>
