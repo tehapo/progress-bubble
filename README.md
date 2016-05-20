@@ -35,5 +35,10 @@ bower install progress-bubble --save
 </progress-bubble>
 ```
 
+If you need to customize the starting angle of the progress, you can use the `angle` property (`-90` by default).
+```html
+<progress-bubble angle="45"></progress-bubble>
+```
+
 ### Development
 Use ```polyserve``` during development as instructed in [Create a reusable element](https://www.polymer-project.org/1.0/docs/start/reusableelements.html) article.
