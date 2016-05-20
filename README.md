@@ -17,21 +17,21 @@ bower install progress-bubble --save
 ### Usage
 ```html
 <progress-bubble value="8" max="10">
-    <strong>80%</strong>
+  <strong>80%</strong>
 </progress-bubble>
 
 <!-- Custom styling and stroke-width -->
 <style is="custom-style">
-    progress-bubble {
-        --progress-bubble-stroke-color: rgba(255, 0, 0, 0.8);
-        --progress-bubble-stroke-linecap: butt;
-        --progress-bubble-bg-stroke-color: rgba(193, 193, 193, 0.2);
-        --progress-bubble-background: transparent;
-        --progress-bubble-reflection-display: none;
-    }
+  progress-bubble {
+    --progress-bubble-stroke-color: rgba(255, 0, 0, 0.8);
+    --progress-bubble-stroke-linecap: butt;
+    --progress-bubble-bg-stroke-color: rgba(193, 193, 193, 0.2);
+    --progress-bubble-background: transparent;
+    --progress-bubble-reflection-display: none;
+  }
 </style>
 <progress-bubble value="8" max="10" stroke-width="10">
-    <strong>80%</strong>
+  <strong>80%</strong>
 </progress-bubble>
 ```
 
